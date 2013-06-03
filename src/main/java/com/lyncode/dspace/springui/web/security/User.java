@@ -19,21 +19,37 @@ public class User implements Authentication, Serializable {
 		if (auth != null) 
 			return (User) auth;
 		else
-			return new User(false);
+			return guestInstance();
+	}
+	
+	public static User guestInstance () {
+		return new User();
+	}
+	public static User adminInstance () {
+		return new User(true);
+	}
+	public static User memberInstance () {
+		return new User(false);
 	}
 	
 	private boolean guest;
+	private boolean admin;
 	
 	public User () {
 		guest = true;
 	}
 	
 	public User(boolean admin) {
-		this.guest = !admin;
+		this.guest = false;
+		this.admin = admin;
 	}
 
 	public boolean isGuest() {
 		return guest;
+	}
+	
+	public boolean isAdmin () {
+		return admin;
 	}
 	
 	public boolean equals (Object obj) {

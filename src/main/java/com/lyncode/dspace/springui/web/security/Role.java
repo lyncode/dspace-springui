@@ -7,7 +7,7 @@ public class Role implements GrantedAuthority {
 	private StaticRole role;
 	
 	public Role () {
-		this.role = StaticRole.ADMIN;
+		this.role = StaticRole.MEMBER;
 	}
 	
 	public Role (StaticRole role) {
@@ -19,6 +19,7 @@ public class Role implements GrantedAuthority {
 	}
 
 	public enum StaticRole {
-		ADMIN
+		ADMIN,
+		MEMBER
 	}
 }

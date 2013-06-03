@@ -4,5 +4,5 @@ define(['lyncode/core/config'], function (config){
 			return config.baseUrl + "/public" + path;
 		else
 			return config.baseUrl + "/public/" + path;
-	}
+	};
 });

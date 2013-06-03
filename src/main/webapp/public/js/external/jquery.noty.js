@@ -715,5 +715,5 @@ define(['jquery'], function ($) {
 	    // End of the BC
 	
 	    return $.notyRenderer.init(options);
-	}
+	};
 });

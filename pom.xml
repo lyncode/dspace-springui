@@ -124,6 +124,11 @@
 			<artifactId>jtwig</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.dspace</groupId>
+			<artifactId>jargon</artifactId>
+			<version>1.4.25</version>
+		</dependency>
 	</dependencies>
 
 	<build>
