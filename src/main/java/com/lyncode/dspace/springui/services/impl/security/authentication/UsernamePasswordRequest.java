@@ -1,4 +1,4 @@
-package com.lyncode.dspace.springui.services.impl.authentication;
+package com.lyncode.dspace.springui.services.impl.security.authentication;
 
 import java.util.Collection;
 

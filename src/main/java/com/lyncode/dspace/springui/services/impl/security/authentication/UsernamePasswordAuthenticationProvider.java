@@ -1,4 +1,4 @@
-package com.lyncode.dspace.springui.services.impl.authentication;
+package com.lyncode.dspace.springui.services.impl.security.authentication;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;

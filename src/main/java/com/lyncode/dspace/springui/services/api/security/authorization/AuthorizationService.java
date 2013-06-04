@@ -9,7 +9,7 @@
 package com.lyncode.dspace.springui.services.api.security.authorization;
 
 import com.lyncode.dspace.springui.orm.entity.IDSpaceObject;
-import com.lyncode.dspace.springui.services.impl.authorization.DSpaceAuthorizeConfiguration;
+import com.lyncode.dspace.springui.services.impl.security.authorization.DSpaceAuthorizeConfiguration;
 
 /**
  * AuthorizationService handles all authorization checks for DSpace. For better

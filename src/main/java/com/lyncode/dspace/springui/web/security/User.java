@@ -13,16 +13,20 @@ import com.lyncode.dspace.springui.orm.dao.content.PredefinedGroup;
 import com.lyncode.dspace.springui.orm.entity.Eperson;
 import com.lyncode.dspace.springui.web.security.Role.StaticRole;
 
-public class User implements Authentication, Serializable {
+public class User implements com.lyncode.dspace.springui.services.api.security.User, Serializable {
 	private static final long serialVersionUID = 4466828947980026611L;
 	private Eperson eperson;
 	
 	public static User getCurrentUser () {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth != null) 
-			return (User) auth;
-		else
+		try {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (auth != null) 
+				return (User) auth;
+			else
+				return new User();
+		} catch (Exception e) {
 			return new User();
+		}
 	}
 	
 	public User () {
@@ -74,5 +78,10 @@ public class User implements Authentication, Serializable {
 	@Override
 	public void setAuthenticated(boolean arg0) throws IllegalArgumentException {
 		// Nothing
+	}
+
+	@Override
+	public Eperson getEperson() {
+		return this.eperson;
 	}
 }
