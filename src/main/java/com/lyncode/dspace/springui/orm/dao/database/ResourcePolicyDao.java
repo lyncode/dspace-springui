@@ -13,7 +13,7 @@ import com.lyncode.dspace.springui.orm.dao.api.IResourcePolicyDao;
 
 import com.lyncode.dspace.springui.orm.entity.IDSpaceObject;
 import com.lyncode.dspace.springui.orm.entity.ResourcePolicy;
-import com.lyncode.dspace.springui.services.api.auth.Action;
+import com.lyncode.dspace.springui.services.api.security.authorization.Action;
 
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;

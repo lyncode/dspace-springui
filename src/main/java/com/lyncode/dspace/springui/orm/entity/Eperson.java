@@ -305,6 +305,33 @@ public class Eperson extends DSpaceObject {
 		this.specialGroups.remove(e);
 	}
 	
+
+	@Transient
+	public boolean memberOf (PredefinedGroup g) {
+		// Optimized code
+		if (g == PredefinedGroup.ANONYMOUS)
+			return true;
+		// First search for in-memory groups (special groups)
+		if (this.getSpecialGroups() != null)
+			for (EpersonGroup e : this.getSpecialGroups())
+				if (e.getID() == g.getId())
+					return true;
+		// Next search for the current eperson group
+		if (this.getEpersonGroups() != null)
+			for (EpersonGroup e : this.getEpersonGroups())
+				if (e.getID() == g.getId())
+					return true;
+		// At last, search in the hierarchy
+		// If user belongs to Group g then he belongs to all parent groups of it
+		if (this.getEpersonGroups() != null)
+			for (EpersonGroup eg : this.getEpersonGroups())
+				for (EpersonGroup e : eg.getAllParents())
+					if (e.getID() == g.getId())
+						return true;
+		
+		return false;
+	}
+	
 	@Transient
 	public boolean memberOf (EpersonGroup g) {
 		// Optimized code
@@ -355,5 +382,10 @@ public class Eperson extends DSpaceObject {
 						return true;
 		
 		return false;
+	}
+	
+	@Transient
+	public String getName () {
+		return (this.getFirstName()+ " " + this.getLastName());
 	}
 }

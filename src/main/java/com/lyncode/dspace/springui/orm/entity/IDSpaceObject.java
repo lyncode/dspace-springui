@@ -8,7 +8,7 @@
 package com.lyncode.dspace.springui.orm.entity;
 
 import com.lyncode.dspace.springui.orm.dao.content.DSpaceObjectType;
-import com.lyncode.dspace.springui.services.api.auth.Action;
+import com.lyncode.dspace.springui.services.api.security.authorization.Action;
 
 /**
  * 

@@ -5,7 +5,7 @@
  *
  * http://www.dspace.org/license/
  */
-package com.lyncode.dspace.springui.services.api.auth;
+package com.lyncode.dspace.springui.services.api.security.authorization;
 
 import java.util.ArrayList;
 import java.util.List;

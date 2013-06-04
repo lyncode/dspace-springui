@@ -5,7 +5,7 @@
  *
  * http://www.dspace.org/license/
  */
-package com.lyncode.dspace.springui.services.api.auth;
+package com.lyncode.dspace.springui.services.api.security.authorization;
 
 /**
  * The action enum is intended to replace the use of some contants

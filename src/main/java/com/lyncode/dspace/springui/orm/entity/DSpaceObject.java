@@ -15,7 +15,7 @@ import javax.persistence.Transient;
 import com.lyncode.dspace.springui.orm.dao.api.IHandleDao;
 import com.lyncode.dspace.springui.orm.dao.api.IMetadataValueDao;
 import com.lyncode.dspace.springui.orm.dao.api.IResourcePolicyDao;
-import com.lyncode.dspace.springui.services.api.auth.Action;
+import com.lyncode.dspace.springui.services.api.security.authorization.Action;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;

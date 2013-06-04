@@ -5,7 +5,7 @@
  *
  * http://www.dspace.org/license/
  */
-package com.lyncode.dspace.springui.services.impl.auth;
+package com.lyncode.dspace.springui.services.impl.authorization;
 
 import java.util.List;
 
@@ -16,12 +16,12 @@ import com.lyncode.dspace.springui.orm.dao.api.IResourcePolicyDao;
 import com.lyncode.dspace.springui.orm.entity.Eperson;
 import com.lyncode.dspace.springui.orm.entity.IDSpaceObject;
 import com.lyncode.dspace.springui.orm.entity.ResourcePolicy;
-import com.lyncode.dspace.springui.services.api.auth.Action;
-import com.lyncode.dspace.springui.services.api.auth.AuthorizationException;
-import com.lyncode.dspace.springui.services.api.auth.AuthorizationService;
 import com.lyncode.dspace.springui.services.api.configuration.ConfigurationService;
 import com.lyncode.dspace.springui.services.api.context.Context;
 import com.lyncode.dspace.springui.services.api.context.ContextService;
+import com.lyncode.dspace.springui.services.api.security.authorization.Action;
+import com.lyncode.dspace.springui.services.api.security.authorization.AuthorizationException;
+import com.lyncode.dspace.springui.services.api.security.authorization.AuthorizationService;
 
 /**
  * An implementation of an authorization service based on resource policies.

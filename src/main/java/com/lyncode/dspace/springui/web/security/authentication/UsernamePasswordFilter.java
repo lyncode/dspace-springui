@@ -14,6 +14,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.util.Assert;
 
+import com.lyncode.dspace.springui.services.impl.authentication.UsernamePasswordRequest;
+
 public class UsernamePasswordFilter extends AbstractAuthenticationProcessingFilter {
     //~ Static fields/initializers =====================================================================================
 

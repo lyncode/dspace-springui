@@ -11,7 +11,7 @@ import java.util.List;
 
 import com.lyncode.dspace.springui.orm.entity.IDSpaceObject;
 import com.lyncode.dspace.springui.orm.entity.ResourcePolicy;
-import com.lyncode.dspace.springui.services.api.auth.Action;
+import com.lyncode.dspace.springui.services.api.security.authorization.Action;
 
 /**
  * @author Miguel Pinto <mpinto@lyncode.com>

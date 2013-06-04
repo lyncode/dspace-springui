@@ -9,69 +9,44 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.lyncode.dspace.springui.orm.dao.content.PredefinedGroup;
+import com.lyncode.dspace.springui.orm.entity.Eperson;
 import com.lyncode.dspace.springui.web.security.Role.StaticRole;
 
 public class User implements Authentication, Serializable {
 	private static final long serialVersionUID = 4466828947980026611L;
-
+	private Eperson eperson;
+	
 	public static User getCurrentUser () {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth != null) 
 			return (User) auth;
 		else
-			return guestInstance();
+			return new User();
 	}
-	
-	public static User guestInstance () {
-		return new User();
-	}
-	public static User adminInstance () {
-		return new User(true);
-	}
-	public static User memberInstance () {
-		return new User(false);
-	}
-	
-	private boolean guest;
-	private boolean admin;
 	
 	public User () {
-		guest = true;
+		// guest
 	}
 	
-	public User(boolean admin) {
-		this.guest = false;
-		this.admin = admin;
-	}
-
-	public boolean isGuest() {
-		return guest;
-	}
-	
-	public boolean isAdmin () {
-		return admin;
-	}
-	
-	public boolean equals (Object obj) {
-		if (obj instanceof User) {
-			User u = (User) obj;
-			if (!u.isGuest() && !this.isGuest()) {
-				return true;
-			}
-		}
-		return false;
+	public User (Eperson eperson) {
+		this.eperson = eperson;
 	}
 
 	@Override
 	public String getName() {
-		return (this.guest) ? "Guest" : "Administrator";
+		if (this.isAuthenticated()) return this.eperson.getName();
+		else return "Guest";
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<Role> roles = new ArrayList<Role>();
-		if (!this.isGuest()) {
-			roles.add(new Role(StaticRole.ADMIN));
+		if (this.isAuthenticated()) {
+			if (this.eperson.memberOf(PredefinedGroup.ADMIN))
+				roles.add(new Role(StaticRole.ADMIN));
+			else
+				roles.add(new Role(StaticRole.MEMBER));
 		}
 		return roles;
 	}
@@ -88,16 +63,16 @@ public class User implements Authentication, Serializable {
 
 	@Override
 	public Object getPrincipal() {
-		return this.getName();
+		return null;
 	}
 
 	@Override
 	public boolean isAuthenticated() {
-		return !this.isGuest();
+		return (this.eperson != null);
 	}
 
 	@Override
 	public void setAuthenticated(boolean arg0) throws IllegalArgumentException {
-		this.guest = !arg0;
+		// Nothing
 	}
 }

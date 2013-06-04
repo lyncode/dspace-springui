@@ -27,9 +27,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.lyncode.dspace.springui.orm.dao.content.DSpaceObjectType;
-import com.lyncode.dspace.springui.services.api.auth.Action;
-import com.lyncode.dspace.springui.services.api.auth.AuthorizationService;
-import com.lyncode.dspace.springui.services.impl.auth.DSpaceAuthorizeConfiguration;
+import com.lyncode.dspace.springui.services.api.security.authorization.Action;
+import com.lyncode.dspace.springui.services.api.security.authorization.AuthorizationService;
+import com.lyncode.dspace.springui.services.impl.authorization.DSpaceAuthorizeConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;

@@ -6,10 +6,10 @@
  * http://www.dspace.org/license/
  */
 
-package com.lyncode.dspace.springui.services.api.auth;
+package com.lyncode.dspace.springui.services.api.security.authorization;
 
 import com.lyncode.dspace.springui.orm.entity.IDSpaceObject;
-import com.lyncode.dspace.springui.services.impl.auth.DSpaceAuthorizeConfiguration;
+import com.lyncode.dspace.springui.services.impl.authorization.DSpaceAuthorizeConfiguration;
 
 /**
  * AuthorizationService handles all authorization checks for DSpace. For better
