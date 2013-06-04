@@ -89,7 +89,7 @@ public class DSpaceStorageService implements StorageService {
 			}
 
 			// The default value is 0
-			incoming = config.getPropertyAsType("assetstore.incoming", 0);
+			incoming = config.getProperty("assetstore.incoming", Integer.class, 0);
 		}
 	}
 

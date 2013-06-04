@@ -141,7 +141,7 @@ public class DSpaceAuthorizeConfiguration {
 	}
 	
 	private boolean getBooleanProperty (String param, boolean def) {
-		Boolean b = this.config.getPropertyAsType(param, Boolean.valueOf(def));
+		Boolean b = this.config.getProperty(param, Boolean.class, Boolean.valueOf(def));
 		if (b == null) return false;
 		else return b.booleanValue();
 	}
