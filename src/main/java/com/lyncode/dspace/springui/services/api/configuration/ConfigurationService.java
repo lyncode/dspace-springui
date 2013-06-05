@@ -47,4 +47,32 @@ public interface ConfigurationService {
      */
     public String getProperty(String name);
 
+    
+    /**
+     * Sets a property changed handler to deal with changed properties
+     * 
+     * @param name
+     * @param handler
+     * @return
+     */
+    public boolean setPropertyWatchHandler (PropertyWatcherHandler handler, String name);
+    
+    
+    /**
+     * Adding a property
+     * 
+     * @param name
+     * @param value
+     * @return
+     */
+    public boolean addProperty (String name, Object value);
+    
+    /**
+     * Setting the property
+     * 
+     * @param name
+     * @param value
+     * @return
+     */
+    public boolean setProperty (String name, Object value);
 }
