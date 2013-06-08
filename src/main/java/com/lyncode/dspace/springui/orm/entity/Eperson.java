@@ -142,7 +142,7 @@ public class Eperson extends DSpaceObject {
 	 * @return the canLogIn
 	 */
     @Column(name = "can_log_in", nullable = true)
-	public boolean isCanLogIn() {
+	public boolean getCanLogIn() {
 		return canLogIn;
 	}
 
@@ -157,7 +157,7 @@ public class Eperson extends DSpaceObject {
 	 * @return the requireCertificate
 	 */
     @Column(name = "require_certificate", nullable = true)
-	public boolean isRequireCertificate() {
+	public boolean getRequireCertificate() {
 		return requireCertificate;
 	}
 
@@ -387,5 +387,11 @@ public class Eperson extends DSpaceObject {
 	@Transient
 	public String getName () {
 		return (this.getFirstName()+ " " + this.getLastName());
+	}
+
+	@Transient
+	public boolean checkPassword(String password2) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
