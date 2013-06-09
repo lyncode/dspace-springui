@@ -2,39 +2,35 @@ package com.lyncode.dspace.springui.services.impl.configuration;
 
 import java.io.File;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.event.ConfigurationEvent;
+import org.apache.commons.configuration.event.ConfigurationListener;
+import org.apache.commons.configuration.reloading.ReloadingStrategy;
 import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.core.env.PropertySource;
 
-import com.lyncode.dspace.springui.services.api.configuration.ConfigurationFileResolver;
+import com.lyncode.dspace.springui.services.api.configuration.ConfigurationPropertyChangeHandler;
 import com.lyncode.dspace.springui.services.api.configuration.ConfigurationServiceException;
-import com.lyncode.dspace.springui.services.api.configuration.PropertyWatcherHandler;
 
-public class DSpacePropertySource<T> extends PropertySource<T> {
+public class DSpacePropertySource extends PropertySource<Object> {
+	public static final String DSPACE_SOURCE = "dspaceSource";
 	private static Logger log = LogManager.getLogger(DSpacePropertySource.class);
 	private PropertiesConfiguration properties;
-	private Thread thread;
 	
-	public DSpacePropertySource(String name, ConfigurationFileResolver resolver) throws ConfigurationServiceException {
-		super(name);
+	public DSpacePropertySource(File f, ReloadingStrategy reloader) throws ConfigurationServiceException {
+		super(f.getName());
 		try {
-			File f = resolver.resolveFile(name);
-			DSpaceReloadingStrategy strategy = new DSpaceReloadingStrategy();
 			properties = new PropertiesConfiguration(f);
 			properties.setAutoSave(true);
-			properties.setReloadingStrategy(strategy);
+			properties.setReloadingStrategy(reloader);
 			properties.setLogger(new Log4JLogger(log));
-			thread = strategy.getWatcherThread();
 		} catch (ConfigurationException e) {
 			throw new ConfigurationServiceException(e);
 		}
-	}
-	
-	public Thread getWatcherThread() {
-		return this.thread;
 	}
 
 	@Override
@@ -54,7 +50,7 @@ public class DSpacePropertySource<T> extends PropertySource<T> {
 		this.properties.setProperty(name, value);
 	}
 
-	public void setHandler(String name, PropertyWatcherHandler handler) {
+	public void setHandler(String name, ConfigurationPropertyChangeHandler handler) {
 		this.properties.addConfigurationListener(new DSpaceConfigurationListener(name, handler));
 	}
 
@@ -62,4 +58,34 @@ public class DSpacePropertySource<T> extends PropertySource<T> {
 		this.properties.addProperty(key, value);
 	}
 
+	public class DSpaceConfigurationListener implements ConfigurationListener {
+		private String key;
+		private ConfigurationPropertyChangeHandler handler;
+		
+		
+		public DSpaceConfigurationListener(String key, ConfigurationPropertyChangeHandler handler) {
+			this.key = key;
+			this.handler = handler;
+		}
+
+		@Override
+		public void configurationChanged(ConfigurationEvent event) {
+			if (event.getType() == AbstractConfiguration.EVENT_ADD_PROPERTY) {
+				if (event.getPropertyName().equals(this.key)) {
+					this.handler.handleCreation(event.getPropertyValue());
+				}
+			} else if (event.getType() == AbstractConfiguration.EVENT_SET_PROPERTY) {
+				if (event.getPropertyName().equals(this.key)) {
+					this.handler.handleModification(event.getPropertyValue());
+				}
+			} else if (event.getType() == AbstractConfiguration.EVENT_CLEAR_PROPERTY) {
+				if (event.getPropertyName().equals(this.key)) {
+					this.handler.handleDelete();
+				}
+			} else if (event.getType() == AbstractConfiguration.EVENT_CLEAR) {
+				this.handler.handleDelete();
+			}
+		}
+
+	}
 }

@@ -1,6 +1,5 @@
-package com.lyncode.dspace.springui.services.impl.configuration;
+package com.lyncode.dspace.springui.web.listener.configuration;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
@@ -12,23 +11,27 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.lyncode.dspace.springui.services.api.configuration.ConfigurationLocator;
+
 public class WatchConfigurationFileChanges implements Runnable {
-	private static Logger log = LogManager.getLogger(WatchConfigurationFileChanges.class); 
-	private File file;
+	private Logger log = LogManager.getLogger(WatchConfigurationFileChanges.class); 
+	private ConfigurationLocator locator;
 	private boolean changed;
 	
 	
-	public WatchConfigurationFileChanges(File f) {
-		this.file = f;
-		this.changed = false;
+	public WatchConfigurationFileChanges(ConfigurationLocator loc) {
+		locator = loc;
 	}
 	
-	public synchronized boolean isModified () {
+	public synchronized boolean isModifiedAndReset () {
 		if (this.changed) {
 			this.changed = false;
-			return true;
+			return this.changed;
 		}
 		return false;
+	}
+	public synchronized boolean isModified () {
+		return this.changed;
 	}
 
 	public synchronized void setModified () {
@@ -38,7 +41,7 @@ public class WatchConfigurationFileChanges implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
-			Path path = Paths.get(this.file.getParentFile().toURI());
+			Path path = Paths.get(this.locator.getConfigurationDirectory().toURI());
 			try {
 				WatchService watcher = path.getFileSystem().newWatchService();
 				path.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
@@ -50,7 +53,9 @@ public class WatchConfigurationFileChanges implements Runnable {
 				List<WatchEvent<?>> events = watckKey.pollEvents();
 				for (WatchEvent<?> event : events) {
 					Path file = (Path) event.context();
-					if (this.file.equals(file)) 
+					if (file != null && 
+							file.getFileName() != null && 
+							file.getFileName().equals(this.locator.getConfigurationFilename()))
 						this.setModified();
 				}
 
@@ -59,5 +64,4 @@ public class WatchConfigurationFileChanges implements Runnable {
 			}
 		}
 	}
-
 }

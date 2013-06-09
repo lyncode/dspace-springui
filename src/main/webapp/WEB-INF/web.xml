@@ -14,13 +14,16 @@
 	<listener>
 		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
 	</listener>
+	<listener>
+		<listener-class>com.lyncode.dspace.springui.web.listener.ConfigurationListener</listener-class>
+	</listener>
 	
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
 			/WEB-INF/springui-servlet.xml,
 			/WEB-INF/security.xml,
-			classpath*:/applicationContext.xml
+			/WEB-INF/applicationContext.xml
 		</param-value>
 	</context-param>
 
