@@ -14,7 +14,7 @@ The DSpace SpringUI will be a completely independent DSpace module. The main goa
 Want to help?
 ========
 
-Just fork the project. See our WIKI and what you need to start developing.
+Just fork the project. See our [WIKI](https://github.com/lyncode/dspace-springui/wiki) and what you need to start developing.
 
 Current Stage
 ========
