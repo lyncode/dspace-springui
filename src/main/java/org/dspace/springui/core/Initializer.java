@@ -16,8 +16,9 @@ public class Initializer {
 	
 	public static void initialize (ConfigurableApplicationContext context) throws ConfigurationServiceException {
 		if (fileWatcher == null) {
-			WatchConfigurationFileChanges watcher = new WatchConfigurationFileChanges();
+			WatchConfigurationFileChanges watcher = new WatchConfigurationFileChanges(context);
 			ReloadingStrategy reloader = new ReloadStrategy(watcher);
+			fileWatcher = new Thread(watcher);
 			File configFile = new File(DSpaceConfigurationLocator.getConfigurationDirectory(context), DSpaceConfigurationLocator.getConfigurationFilename());
 			DSpacePropertySource source = new DSpacePropertySource(configFile, reloader);
 			context.getEnvironment().getPropertySources().addFirst(source);

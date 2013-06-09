@@ -11,6 +11,9 @@
     http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/aop    
     http://www.springframework.org/schema/aop/spring-aop.xsd">
+    
+    
+	<context:component-scan base-package="org.dspace.springui.orm" />
 	
 	<bean id="configurationService" class="org.dspace.springui.services.impl.configuration.DSpaceConfigurationService"></bean>
 	<bean id="configurationLocator" class="org.dspace.springui.services.impl.configuration.DSpaceConfigurationLocator"></bean>

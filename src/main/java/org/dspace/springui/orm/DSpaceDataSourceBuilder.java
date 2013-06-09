@@ -22,9 +22,9 @@ public class DSpaceDataSourceBuilder {
 	private static DriverManagerDataSource driver;
 	
 	public DriverManagerDataSource create () {
+		if (!config.getProperty("dspace.installed", Boolean.class, false))
+			return null;
 		if (driver == null) {
-			if (!config.getProperty("dspace.installed", Boolean.class))
-				return null;
 			driver = new DriverManagerDataSource();
 			driver.setDriverClassName(config.getProperty("db.driver"));
 			

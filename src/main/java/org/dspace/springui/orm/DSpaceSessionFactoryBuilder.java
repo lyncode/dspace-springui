@@ -43,8 +43,8 @@ public class DSpaceSessionFactoryBuilder  {
 	}
 
 	public SessionFactory create () throws IOException {
+		if (!config.getProperty("dspace.installed", Boolean.class, false)) return null;
 		if (sessionFac == null) {
-			if (!config.getProperty("dspace.installed", Boolean.class)) return null;
 			local = new LocalSessionFactoryBean();
 			local.setDataSource(datasource);
 			local.setPackagesToScan(IDSpaceObject.class.getPackage().getName());

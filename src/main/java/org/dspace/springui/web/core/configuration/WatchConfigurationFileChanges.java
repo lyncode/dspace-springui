@@ -11,15 +11,17 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.dspace.springui.services.impl.configuration.DSpaceConfigurationLocator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.ConfigurableWebApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 
 public class WatchConfigurationFileChanges implements Runnable {
 	private Logger log = LogManager.getLogger(WatchConfigurationFileChanges.class); 
 	private boolean changed;
-	@Autowired ConfigurableWebApplicationContext context;
+	private ConfigurableApplicationContext context;
 	
+	public WatchConfigurationFileChanges (ConfigurableApplicationContext context2) {
+		this.context = context2;
+	}
 	
 	public synchronized boolean isModifiedAndReset () {
 		if (this.changed) {

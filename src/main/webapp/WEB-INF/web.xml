@@ -14,9 +14,6 @@
 	<listener>
 		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
 	</listener>
-	<listener>
-		<listener-class>org.dspace.springui.web.listener.ConfigurationListener</listener-class>
-	</listener>
 	
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
