@@ -14,6 +14,12 @@
 	<context:spring-configured />
 	
  	<mvc:annotation-driven />
+ 	<mvc:interceptors>
+ 		<mvc:interceptor>
+ 			<mvc:mapping path="/**"/>
+ 			<bean class="org.dspace.springui.web.interceptor.InstallationInterceptor" />
+ 		</mvc:interceptor>
+ 	</mvc:interceptors>
  	
  	<bean id="theme" class="com.lyncode.jtwig.mvc.DefaultThemeResolver">
  		<property name="theme">
