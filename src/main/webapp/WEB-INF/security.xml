@@ -34,7 +34,7 @@
 		<beans:property name="defaultFailureUrl" value="/" />
 	</beans:bean>
 
-	<beans:bean id="springuiUserPassFilter" class="com.lyncode.dspace.springui.web.security.UsernamePasswordFilter">
+	<beans:bean id="springuiUserPassFilter" class="org.dspace.springui.web.security.authentication.UsernamePasswordFilter">
 		<beans:property name="authenticationManager" ref="authenticationManager" />
 		<beans:property name="authenticationSuccessHandler">
 			<beans:ref bean="authenticationSuccessHandler" />
@@ -44,7 +44,7 @@
 		</beans:property>
 	</beans:bean>
 
-	<beans:bean id="usernamePasswordAuthenticator" class="com.lyncode.dspace.springui.web.security.UsernamePasswordAuthenticationProvider" />
+	<beans:bean id="usernamePasswordAuthenticator" class="org.dspace.springui.services.impl.security.authentication.UsernamePasswordAuthenticationProvider" />
 
 	<authentication-manager alias="authenticationManager">
 	  <authentication-provider ref="usernamePasswordAuthenticator" />

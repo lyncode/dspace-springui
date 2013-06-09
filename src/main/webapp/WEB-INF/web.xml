@@ -15,7 +15,7 @@
 		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
 	</listener>
 	<listener>
-		<listener-class>com.lyncode.dspace.springui.web.listener.ConfigurationListener</listener-class>
+		<listener-class>org.dspace.springui.web.listener.ConfigurationListener</listener-class>
 	</listener>
 	
 	<context-param>
@@ -26,6 +26,12 @@
 			/WEB-INF/applicationContext.xml
 		</param-value>
 	</context-param>
+	
+	<context-param>
+    	<param-name>contextInitializerClasses</param-name>
+    	<param-value>org.dspace.springui.web.core.WebInitializer</param-value>
+	</context-param>
+	
 
 	<servlet>
 		<servlet-name>springui</servlet-name>
@@ -36,7 +42,7 @@
 	
 	<servlet>
 		<servlet-name>FileSevlet</servlet-name>
-		<servlet-class>com.lyncode.dspace.springui.web.servlet.FileServlet</servlet-class>
+		<servlet-class>org.dspace.springui.web.servlet.FileServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
