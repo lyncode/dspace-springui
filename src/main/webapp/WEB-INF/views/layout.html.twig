@@ -35,7 +35,7 @@
 	<div id="wrap">
 		<div id="header">
 		{% invoke UserRelated getUser %}
-		{% if not(user) || user.isGuest %}
+		{% if not(user) || not(user.isAuthenticated) %}
 		{% include 'bars/guest_top.html.twig' %}
 		{% else %}
 		{% include 'bars/user_top.html.twig' %}
