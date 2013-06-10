@@ -2,5 +2,56 @@
 {% block stepNumberTitle %}1{% endblock %}
 {% block stepNumber %}1{% endblock %}
 {% block bodyContent %}
-Hello
+<div class="text-center">
+	<div class="nice-container navigate null-bottom-padding">
+		<h1>{{ 'Database Configuration' | translate }}</h1>
+		<hr />
+		{% if error %}
+		<div class="alert alert-error">
+			<b>{{ 'Error' | trans }}</b> {{ error | trans }}
+		</div>
+		{% endif %}
+		<div class="row-fluid">
+			<form class="form-horizontal" method="POST" action="{{ path '/install/step2' }}">
+			  <div class="control-group">
+			    <label class="control-label" for="host">{{ 'Host' | trans }}</label>
+			    <div class="controls">
+			      <input required type="text" id="host" name="host" placeholder="{{ 'Host' | trans }}" value="{{ connection.host }}" />
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="port">{{ 'Port' | trans }}</label>
+			    <div class="controls">
+			      <input type="text" id="port" name="port" placeholder="{{ 'Port' | trans }}" value="{% if connection.port %}{{ connection.port }}{% else %}5432{% endif %}" />
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="user">{{ 'Username' | trans }}</label>
+			    <div class="controls">
+			      <input required type="text" id="user" name="username" placeholder="{{ 'Username' | trans }}" value="{{ connection.user }}" />
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="password">{{ 'Password' | trans }}</label>
+			    <div class="controls">
+			      <input type="password" id="password" name="password" placeholder="{{ 'Password' | trans }}" />
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="schema">{{ 'Schema' | trans }}</label>
+			    <div class="controls">
+			      <input required type="text" id="schema" name="schema" placeholder="{{ 'Schema' | trans }}" value="{{ connection.schema }}" />
+			    </div>
+			  </div>
+			  <hr />
+			  <div class="parent">
+			  	<button type="submit" class="pull-right btn btn-large btn-primary">Next</button>
+			  </div>
+			  <div class="clear"></div>
+			</form>
+		</div>
+		
+	</div>
+</div>
+<div class="vertical-space"></div>
 {% endblock %}

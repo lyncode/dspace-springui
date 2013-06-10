@@ -1,0 +1,78 @@
+{% extends 'layout.html.twig' %}
+{% block stepNumberTitle %}2{% endblock %}
+{% block stepNumber %}2{% endblock %}
+{% block bodyContent %}
+<div class="text-center">
+	<div class="nice-container navigate null-bottom-padding">
+		<h1>{{ 'E-Mail Configuration' | translate }}</h1>
+		<hr />
+		{% if error %}
+		<div class="alert alert-error">
+			<b>{{ 'Error' | trans }}</b> {{ error | trans }}
+		</div>
+		{% endif %}
+		<div class="row-fluid">
+			<form class="form-horizontal" method="POST" action="{{ path '/install/step3' }}">
+			  <div class="control-group">
+			    <label class="control-label" for="host">{{ 'Host' | trans }}</label>
+			    <div class="controls">
+			      <input required type="text" id="host" name="host" placeholder="{{ 'Host' | trans }}" value="{{ email.host }}" />
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="port">{{ 'Port' | trans }}</label>
+			    <div class="controls">
+			      <input type="text" required id="port" name="port" placeholder="{{ 'Port' | trans }}" value="{% if email.port %}{{ email.port }}{% else %}25{% endif %}" />
+			    </div>
+			  </div>
+			  <div class="accordion" id="accordion2">
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+				      Authentication Details
+				      </a>
+				    </div>
+				    <div id="collapseOne" class="accordion-body collapse">
+				      <div class="accordion-inner">
+					      <div class="control-group">
+						    <label class="control-label" for="username">{{ 'Username' | trans }}</label>
+						    <div class="controls">
+						      <input type="text" id="username" name="username" placeholder="{{ 'Username' | trans }}" value="{{ email.user }}" />
+						    </div>
+						  </div>
+						  <div class="control-group">
+						    <label class="control-label" for="password">{{ 'Password' | trans }}</label>
+						    <div class="controls">
+						      <input type="password" id="password" name="password" placeholder="{{ 'Password' | trans }}" />
+						    </div>
+						  </div>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			  <div class="collapse">
+				  <div class="control-group">
+				    <label class="control-label" for="user">{{ 'Username' | trans }}</label>
+				    <div class="controls">
+				      <input required type="text" id="user" name="username" placeholder="{{ 'Username' | trans }}" value="{{ email.user }}" />
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="password">{{ 'Password' | trans }}</label>
+				    <div class="controls">
+				      <input type="password" id="password" name="password" placeholder="{{ 'Password' | trans }}" />
+				    </div>
+				  </div>
+			  </div>
+			  <hr />
+			  <div class="parent">
+			  	<button type="submit" class="pull-right btn btn-large btn-primary">Next</button>
+			  </div>
+			  <div class="clear"></div>
+			</form>
+		</div>
+		
+	</div>
+</div>
+<div class="vertical-space"></div>
+{% endblock %}
