@@ -4,6 +4,7 @@ import javax.servlet.http.HttpSession;
 
 import org.dspace.springui.orm.DatabaseConnection;
 import org.dspace.springui.services.api.email.SMTPSettings;
+import org.dspace.springui.services.api.email.SMTPSettings.ConnectionType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,8 +50,10 @@ public class InstallController {
 
 
 	@RequestMapping("/step3")
-	public String step2Action (ModelMap model, HttpSession session,
+	public String step3Action (ModelMap model, HttpSession session,
 			@RequestParam("host") String host, 
+			@RequestParam("test") String test,
+			@RequestParam(value="connection", required=false) String connection,
 			@RequestParam(value="username", required=false) String username,
 			@RequestParam(value="password", required=false) String password,
 			@RequestParam(value="port", required=false, defaultValue="25") String portI) {
@@ -61,9 +64,12 @@ public class InstallController {
 			// Do nothing
 		}
 		SMTPSettings email = new SMTPSettings(host, port, username, password);
-		if (email.isAvailable()) {
+		email.setConnection(ConnectionType.valueOf(connection.toUpperCase()));
+		
+		if (email.isAvailable(test)) {
 			session.setAttribute("email", email);
 		} else {
+			model.addAttribute("test", test);
 			model.addAttribute("email", email);
 			model.addAttribute("error", "Unable to connect to SMTP server. Are you providing the correct details?");
 			return "install/step2";

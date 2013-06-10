@@ -2,12 +2,25 @@ package org.dspace.springui.services.api.email;
 
 import java.util.Properties;
 
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 public class SMTPSettings {
+	public enum ConnectionType {
+		NONE,
+		SSL,
+		TLS
+	}
+	
 	private String host;
 	private int port;
 	private boolean hasAuthentication;
+	private ConnectionType connection;
 	
 	private String username;
 	private String password;
@@ -17,6 +30,7 @@ public class SMTPSettings {
 		this.host = host;
 		this.port = port;
 		this.hasAuthentication = false;
+		this.connection = ConnectionType.NONE;
 	}
 	
 	public SMTPSettings (String host, int port, String user, String pass) {
@@ -24,9 +38,21 @@ public class SMTPSettings {
 		this.port = port;
 		
 		this.hasAuthentication = (user != null);
+		this.connection = ConnectionType.NONE;
 		
 		this.username = user;
 		this.password = pass;
+	}
+	
+	public ConnectionType getConnection () {
+		return this.connection;
+	}
+
+	/**
+	 * @param useSSL the useSSL to set
+	 */
+	public void setConnection(ConnectionType type) {
+		this.connection = type;
 	}
 
 	/**
@@ -65,20 +91,45 @@ public class SMTPSettings {
 	}
 	
 	
-	public boolean isAvailable () {
+	public boolean isAvailable (String testEmail) {
+		final String username = this.getUsername();
+		final String password = this.getPassword();
 		Properties props = new Properties();
-        // required for gmail 
-        props.put("mail.smtp.auth", (this.hasAuthentication() ? "true" : "false"));
+		
+
+		props.put("mail.smtp.host", this.getHost());
+		props.put("mail.smtp.port", this.getPort()+"");
+		if (this.connection == ConnectionType.TLS) {
+			props.put("mail.smtp.starttls.enable", "true");
+		} else if (this.connection == ConnectionType.SSL) {
+			props.put("mail.smtp.socketFactory.port", this.getPort()+"");
+			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		}
+		
+		Authenticator auth = null;
+		if (this.hasAuthentication()) {
+	        props.put("mail.smtp.auth", "true");
+	        auth = new Authenticator() {
+	        	protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(username, password);
+				}
+			};
+		}
+		
+		
         // or use getDefaultInstance instance if desired...
-        JavaMailSenderImpl sender = new JavaMailSenderImpl();
-        sender.setPort(this.getPort());
-        sender.setHost(this.getHost());
-        sender.setJavaMailProperties(props);
-        if (this.hasAuthentication()) {
-        	sender.setUsername(this.getUsername());
-        	sender.setPassword(this.getPassword());
-        }
-        return true;
+        Session session = Session.getInstance(props, auth);
+        
+		try {
+			Message message = new MimeMessage(session);
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(testEmail));
+			message.setSubject("DSpace : Testing SMTP Configuration");
+			message.setText("Success!");
+			Transport.send(message);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 }

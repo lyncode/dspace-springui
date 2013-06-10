@@ -1,0 +1,81 @@
+{% extends 'layout.html.twig' %}
+{% block stepNumberTitle %}3{% endblock %}
+{% block stepNumber %}3{% endblock %}
+{% block bodyContent %}
+<div class="text-center">
+	<div class="nice-container navigate null-bottom-padding">
+		<h1>{{ 'E-Mail Configuration' | translate }}</h1>
+		<hr />
+		{% if error %}
+		<div class="alert alert-error">
+			<b>{{ 'Error' | trans }}</b> {{ error | trans }}
+		</div>
+		{% endif %}
+		<div class="row-fluid">
+			<form class="form-horizontal" method="POST" action="{{ path '/install/step3' }}">
+			  <div class="control-group">
+			    <label class="control-label" for="host">{{ 'Host' | trans }}</label>
+			    <div class="controls">
+			      <input required type="text" id="host" name="host" placeholder="{{ 'Host' | trans }}" value="{{ email.host }}" />
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="port">{{ 'Port' | trans }}</label>
+			    <div class="controls">
+			      <input type="text" required id="port" name="port" placeholder="{{ 'Port' | trans }}" value="{% if email.port %}{{ email.port }}{% else %}25{% endif %}" />
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="connection">{{ 'Connection' | trans }}</label>
+			    <div class="controls">
+			    	<select id="connection" name="connection">
+			    		<option value="none"{% if (email.connection.name == 'NONE') %} selected{% endif %}>{{ 'None' | trans }}</option>
+			    		<option value="ssl"{% if (email.connection.name == 'SSL') %} selected{% endif %}>{{ 'SSL' | trans }}</option>
+			    		<option value="tls"{% if (email.connection.name == 'TLS') %} selected{% endif %}>{{ 'TLS' | trans }}</option>
+			    	</select>
+			    </div>
+			  </div>
+			  <div class="accordion" id="accordion2">
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+				      Authentication Details
+				      </a>
+				    </div>
+				    <div id="collapseOne" class="accordion-body collapse in">
+				      <div class="accordion-inner">
+					      <div class="control-group">
+						    <label class="control-label" for="username">{{ 'Username' | trans }}</label>
+						    <div class="controls">
+						      <input type="text" id="username" name="username" placeholder="{{ 'Username' | trans }}" value="{{ email.username }}" />
+						    </div>
+						  </div>
+						  <div class="control-group">
+						    <label class="control-label" for="password">{{ 'Password' | trans }}</label>
+						    <div class="controls">
+						      <input type="password" id="password" name="password" placeholder="{{ 'Password' | trans }}" />
+						    </div>
+						  </div>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			  <hr />
+			  <div class="control-group">
+			    <label class="control-label" for="test">{{ 'Test E-mail' | trans }}</label>
+			    <div class="controls">
+			      <input type="text" required id="test" name="test" placeholder="{{ 'Test E-mail' | trans }}" value="{{ test }}" />
+			    </div>
+			  </div>
+			  <hr />
+			  <div class="parent">
+			  	<button type="submit" class="pull-right btn btn-large btn-primary">Test E-mail &amp; Go Next</button>
+			  </div>
+			  <div class="clear"></div>
+			</form>
+		</div>
+		
+	</div>
+</div>
+<div class="vertical-space"></div>
+{% endblock %}
