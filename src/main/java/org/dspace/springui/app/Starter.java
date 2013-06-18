@@ -10,14 +10,12 @@ public class Starter {
 	private static Logger log = Logger.getLogger(Starter.class);
 	public static void main(String[] args) {
 		try {
-			final ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:/applicationContext.xml");
+			final ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
 			final Map<String, Service> services = applicationContext.getBeansOfType(Service.class);
 			
 			// Initialization phase
-			for (Service service : services.values()) {
-				applicationContext.getAutowireCapableBeanFactory().autowireBean(service);
+			for (Service service : services.values())
 				service.init();
-			}
 			
 			// Start phase
 			for (Service service : services.values())

@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class WebApplicationService implements Service {
 	private static final String ROOT_HANDLER_NAME = "ROOT";
 	private static final String WAR_EXTENSION = ".war";
+	private static final int DEFAULT_HTTP_PORT = 9999;
+	private static final String DEFAULT_WEBAPPS_DIR = "webapps";
 	private static Logger log = Logger.getLogger(WebApplicationService.class);
 	@Autowired ConfigurationService config;
 	
@@ -117,7 +119,7 @@ public class WebApplicationService implements Service {
 	
 		if (config.getProperty("server.http", Boolean.class, true)) {
 			SocketConnector connectorHTTP = new SocketConnector();
-			connectorHTTP.setPort(config.getProperty("server.http.port", Integer.class));
+			connectorHTTP.setPort(config.getProperty("server.http.port", Integer.class, DEFAULT_HTTP_PORT));
 			connectors.add(connectorHTTP);
 		}
 		
@@ -127,8 +129,8 @@ public class WebApplicationService implements Service {
 		}
  
 		// register the connector
-		server.setConnectors((Connector[]) connectors.toArray());
-		File webappDir = new File(config.getProperty("server.webapps"));
+		server.setConnectors(connectors.toArray(new Connector[0]));
+		File webappDir = new File(config.getProperty("server.webapps", String.class, DEFAULT_WEBAPPS_DIR));
 		
 		handlers = new HashMap<String, Handler>();
 		File[] files = webappDir.listFiles(new FilenameFilter() {
@@ -137,6 +139,7 @@ public class WebApplicationService implements Service {
 				return dir.isFile() && dir.getName().toLowerCase().endsWith(WAR_EXTENSION);
 			}
 		});
+		if (files == null) files = new File[0];
 		
 		watchHandlers = new HashMap<String, StateRestartServiceHandler>();
 		
