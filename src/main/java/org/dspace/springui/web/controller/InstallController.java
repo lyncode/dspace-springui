@@ -1,79 +1,86 @@
 package org.dspace.springui.web.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.dspace.springui.orm.DatabaseConnection;
-import org.dspace.springui.services.api.email.SMTPSettings;
-import org.dspace.springui.services.api.email.SMTPSettings.ConnectionType;
+import org.apache.log4j.Logger;
+import org.dspace.springui.install.step.AbstractStep;
+import org.dspace.springui.install.step.DatabaseStep;
+import org.dspace.springui.install.step.EmailServerStep;
+import org.dspace.springui.install.step.GeneralStep;
+import org.dspace.springui.install.step.InstallException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@RequestMapping("/install")
 @Controller
+@RequestMapping("/install")
 public class InstallController {
+	private List<AbstractStep<?>> steps;
+	private static Logger log = Logger.getLogger(InstallController.class);
+	
+	public InstallController () {
+		steps = new ArrayList<AbstractStep<?>>();
+		steps.add(new GeneralStep());
+		steps.add(new DatabaseStep());
+		steps.add(new EmailServerStep());
+	}
 	
 	@RequestMapping("")
-	public String indexAction () {
-		return "forward:/install/step1";
+	public String indexAction (ModelMap model) {
+		AbstractStep<?> step = steps.get(0);
+		model.addAttribute("currentStep", 1);
+		model.addAttribute("nextStep", 2);
+		step.prepare(model);
+		return "install/step/"+step.getView();
 	}
 
-	@RequestMapping("/step1")
-	public String step1Action (ModelMap model) {
-		return "install/step1";
-	}
+	
 
-	@RequestMapping("/step2")
-	public String step2Action (ModelMap model, HttpSession session,
-			@RequestParam("host") String host, 
-			@RequestParam("username") String username,
-			@RequestParam(value="password", required=false, defaultValue="") String password,
-			@RequestParam("schema") String schema,
-			@RequestParam(value="port", required=false, defaultValue="5432") String portI) {
-		int port = 0;
+	@RequestMapping(value="/step/{id}", method = RequestMethod.POST)
+	public String stepAction (ModelMap model, HttpSession session, HttpServletRequest request,
+			@PathVariable("id") int stepId) {
+		boolean isFinal = false;
+		model.addAttribute("request", request);
+		AbstractStep<?> previousStep = steps.get(stepId-2);
+		AbstractStep<?> nextStep = null;
+		if (stepId <= steps.size()) 
+			nextStep = steps.get(stepId-1);
+		else
+			isFinal = true;
 		try {
-			port = Integer.parseInt(portI);
-		} catch (Exception e) {
-			// Do nothing
+			Object store = previousStep.validate(request);
+			session.setAttribute(previousStep.getView(), store);
+			if (isFinal) return "forward:/install/final";
+		} catch (InstallException e) {
+			log.error(e.getMessage(), e);
+			model.addAttribute("error", e.getMessage());
+			model.addAttribute("currentStep", stepId-1);
+			model.addAttribute("nextStep", stepId);
+			previousStep.prepare(model);
+			return "install/step/"+previousStep.getView();
 		}
-		DatabaseConnection connection = new DatabaseConnection(host, username, password, schema, port);
-		if (connection.isAvailable()) {
-			session.setAttribute("database", connection);
-		} else {
-			model.addAttribute("connection", connection);
-			model.addAttribute("error", "Unable to connect to database. Are you providing the correct details?");
-			return "install/step1";
-		}
-		return "install/step2";
+		model.addAttribute("currentStep", stepId);
+		model.addAttribute("nextStep", stepId+1);
+		nextStep.prepare(model);
+		return "install/step/"+nextStep.getView();
 	}
+	
 
-
-	@RequestMapping("/step3")
-	public String step3Action (ModelMap model, HttpSession session,
-			@RequestParam("host") String host, 
-			@RequestParam("test") String test,
-			@RequestParam(value="connection", required=false) String connection,
-			@RequestParam(value="username", required=false) String username,
-			@RequestParam(value="password", required=false) String password,
-			@RequestParam(value="port", required=false, defaultValue="25") String portI) {
-		int port = 0;
-		try {
-			port = Integer.parseInt(portI);
-		} catch (Exception e) {
-			// Do nothing
+	@RequestMapping(value="/final")
+	public String finalAction (ModelMap model, HttpSession session, HttpServletRequest request) {
+		for (AbstractStep<?> step : this.steps) {
+			try {
+				step.install(session.getAttribute(step.getView()));
+			} catch (InstallException e) {
+				log.error(e.getMessage(), e);
+				model.addAttribute("error", e.getMessage());
+			}
 		}
-		SMTPSettings email = new SMTPSettings(host, port, username, password);
-		email.setConnection(ConnectionType.valueOf(connection.toUpperCase()));
-		
-		if (email.isAvailable(test)) {
-			session.setAttribute("email", email);
-		} else {
-			model.addAttribute("test", test);
-			model.addAttribute("email", email);
-			model.addAttribute("error", "Unable to connect to SMTP server. Are you providing the correct details?");
-			return "install/step2";
-		}
-		return "install/step3";
+		model.addAttribute("currentStep", this.steps.size());
+		return "install/step/final";
 	}
 }

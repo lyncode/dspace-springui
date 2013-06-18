@@ -1,6 +1,4 @@
-{% extends 'layout.html.twig' %}
-{% block stepNumberTitle %}2{% endblock %}
-{% block stepNumber %}2{% endblock %}
+{% extends '../layout.html.twig' %}
 {% block bodyContent %}
 <div class="text-center">
 	<div class="nice-container navigate null-bottom-padding">
@@ -12,26 +10,26 @@
 		</div>
 		{% endif %}
 		<div class="row-fluid">
-			<form class="form-horizontal" method="POST" action="{{ path '/install/step3' }}">
+			<form class="form-horizontal" method="POST" action="{{ concat('/install/step/', nextStep) | path }}">
 			  <div class="control-group">
 			    <label class="control-label" for="host">{{ 'Host' | trans }}</label>
 			    <div class="controls">
-			      <input required type="text" id="host" name="host" placeholder="{{ 'Host' | trans }}" value="{{ email.host }}" />
+			      <input type="text" id="host" name="host" placeholder="{{ 'Host' | trans }}" value="{{ request.getParameter('host') }}" />
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="port">{{ 'Port' | trans }}</label>
 			    <div class="controls">
-			      <input type="text" required id="port" name="port" placeholder="{{ 'Port' | trans }}" value="{% if email.port %}{{ email.port }}{% else %}25{% endif %}" />
+			      <input type="text" id="port" name="port" placeholder="{{ 'Port' | trans }}" value="{{ request.getParameter('port') }}" />
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="connection">{{ 'Connection' | trans }}</label>
 			    <div class="controls">
 			    	<select id="connection" name="connection">
-			    		<option value="none"{% if (email.connection.name == 'NONE') %} selected{% endif %}>{{ 'None' | trans }}</option>
-			    		<option value="ssl"{% if (email.connection.name == 'SSL') %} selected{% endif %}>{{ 'SSL' | trans }}</option>
-			    		<option value="tls"{% if (email.connection.name == 'TLS') %} selected{% endif %}>{{ 'TLS' | trans }}</option>
+			    		<option value="none"{% if (request.getParameter('connection') == 'NONE') %} selected{% endif %}>{{ 'None' | trans }}</option>
+			    		<option value="ssl"{% if (request.getParameter('connection') == 'SSL') %} selected{% endif %}>{{ 'SSL' | trans }}</option>
+			    		<option value="tls"{% if (request.getParameter('connection') == 'TLS') %} selected{% endif %}>{{ 'TLS' | trans }}</option>
 			    	</select>
 			    </div>
 			  </div>
@@ -47,7 +45,7 @@
 					      <div class="control-group">
 						    <label class="control-label" for="username">{{ 'Username' | trans }}</label>
 						    <div class="controls">
-						      <input type="text" id="username" name="username" placeholder="{{ 'Username' | trans }}" value="{{ email.username }}" />
+						      <input type="text" id="username" name="username" placeholder="{{ 'Username' | trans }}" value="{{ request.getParameter('username') }}" />
 						    </div>
 						  </div>
 						  <div class="control-group">
@@ -64,12 +62,13 @@
 			  <div class="control-group">
 			    <label class="control-label" for="test">{{ 'Test E-mail' | trans }}</label>
 			    <div class="controls">
-			      <input type="text" required id="test" name="test" placeholder="{{ 'Test E-mail' | trans }}" value="{{ test }}" />
+			      <input type="text" id="test" name="test" placeholder="{{ 'Test E-mail' | trans }}" value="{{ request.getParameter('test') }}" />
 			    </div>
 			  </div>
 			  <hr />
-			  <div class="parent">
-			  	<button type="submit" class="pull-right btn btn-large btn-primary">Test E-mail &amp; Go Next</button>
+			  <div class="parent pull-right">
+			  	<button type="submit" class="btn btn-large btn-primary" name="next" value="next">Test E-mail &amp; Go Next</button>
+			  	<button type="submit" class="btn btn-large" name="ignore" value="ignore">Skip</button>
 			  </div>
 			  <div class="clear"></div>
 			</form>

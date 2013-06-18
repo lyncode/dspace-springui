@@ -11,23 +11,5 @@
     http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/aop    
     http://www.springframework.org/schema/aop/spring-aop.xsd">
-    
-    
-	<context:component-scan base-package="org.dspace.springui.orm" />
-	
-	<bean id="configurationService" class="org.dspace.springui.services.impl.configuration.DSpaceConfigurationService"></bean>
-	<bean id="configurationLocator" class="org.dspace.springui.services.impl.configuration.DSpaceConfigurationLocator"></bean>
-	<bean id="contextService" class="org.dspace.springui.services.impl.context.DSpaceContextService"></bean>
-	<bean id="authorizationService" class="org.dspace.springui.services.impl.security.authorization.DSpaceAuthorizationService"></bean>
-	<bean id="storageService" class="org.dspace.springui.services.impl.storage.DSpaceStorageService"></bean>
-	
-	<!-- Datasource -->
-    <bean id="dataSourceBuilder" class="org.dspace.springui.orm.DSpaceDataSourceBuilder" />
-    <bean id="dataSource" factory-bean="dataSourceBuilder" factory-method="create" />
-    <bean id="dspaceSessionBuilder" class="org.dspace.springui.orm.DSpaceSessionFactoryBuilder" depends-on="dataSource">
-    	<property name="dataSource">
-    		<ref bean="dataSource"/>
-    	</property>
-    </bean>
-    <bean id="sessionFactory" factory-bean="dspaceSessionBuilder" factory-method="create" />
+
 </beans>

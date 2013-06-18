@@ -52,11 +52,12 @@ public class DSpaceConfigurationService implements ConfigurationService {
 	}
 
 	@Override
-	public boolean setPropertyWatchHandler(ConfigurationPropertyChangeHandler handler,
-			String key) {
+	public boolean addWatchHandler(ConfigurationPropertyChangeHandler handler,
+			String... key) {
 		DSpacePropertySource source = this.getSource();
 		if (source != null) {
-			source.setHandler(key, handler);
+			for (String k : key)
+				source.addHandler(k, handler);
 			return true;
 		}
 		return false;
@@ -67,6 +68,16 @@ public class DSpaceConfigurationService implements ConfigurationService {
 		DSpacePropertySource source = this.getSource();
 		if (source != null) {
 			source.add(key, value);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean removeWatchHandler(ConfigurationPropertyChangeHandler handler) {
+		DSpacePropertySource source = this.getSource();
+		if (source != null) {
+			source.removeHandler(handler);
 			return true;
 		}
 		return false;

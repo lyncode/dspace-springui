@@ -55,7 +55,9 @@ public interface ConfigurationService {
      * @param handler
      * @return
      */
-    public boolean setPropertyWatchHandler (ConfigurationPropertyChangeHandler handler, String name);
+    public boolean addWatchHandler (ConfigurationPropertyChangeHandler handler, String... name);
+    
+    public boolean removeWatchHandler (ConfigurationPropertyChangeHandler handler);
     
     
     /**

@@ -25,11 +25,6 @@
 		</param-value>
 	</context-param>
 	
-	<context-param>
-    	<param-name>contextInitializerClasses</param-name>
-    	<param-value>org.dspace.springui.web.core.WebInitializer</param-value>
-	</context-param>
-	
 
 	<servlet>
 		<servlet-name>springui</servlet-name>

@@ -1,6 +1,4 @@
-{% extends 'layout.html.twig' %}
-{% block stepNumberTitle %}1{% endblock %}
-{% block stepNumber %}1{% endblock %}
+{% extends '../layout.html.twig' %}
 {% block bodyContent %}
 <div class="text-center">
 	<div class="nice-container navigate null-bottom-padding">
@@ -12,23 +10,23 @@
 		</div>
 		{% endif %}
 		<div class="row-fluid">
-			<form class="form-horizontal" method="POST" action="{{ path '/install/step2' }}">
+			<form class="form-horizontal" method="POST" action="{{ concat('/install/step/', nextStep) | path }}">
 			  <div class="control-group">
 			    <label class="control-label" for="host">{{ 'Host' | trans }}</label>
 			    <div class="controls">
-			      <input required type="text" id="host" name="host" placeholder="{{ 'Host' | trans }}" value="{{ connection.host }}" />
+			      <input required type="text" id="host" name="host" placeholder="{{ 'Host' | trans }}" value="{{ request.getParameter('host') }}" />
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="port">{{ 'Port' | trans }}</label>
 			    <div class="controls">
-			      <input type="text" id="port" name="port" placeholder="{{ 'Port' | trans }}" value="{% if connection.port %}{{ connection.port }}{% else %}5432{% endif %}" />
+			      <input type="text" id="port" name="port" placeholder="{{ 'Port' | trans }}" value="{{ request.getParameter('port') }}" />
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="user">{{ 'Username' | trans }}</label>
 			    <div class="controls">
-			      <input required type="text" id="user" name="username" placeholder="{{ 'Username' | trans }}" value="{{ connection.user }}" />
+			      <input required type="text" id="user" name="username" placeholder="{{ 'Username' | trans }}" value="{{ request.getParameter('username') }}" />
 			    </div>
 			  </div>
 			  <div class="control-group">
@@ -40,12 +38,12 @@
 			  <div class="control-group">
 			    <label class="control-label" for="schema">{{ 'Schema' | trans }}</label>
 			    <div class="controls">
-			      <input required type="text" id="schema" name="schema" placeholder="{{ 'Schema' | trans }}" value="{{ connection.schema }}" />
+			      <input required type="text" id="schema" name="schema" placeholder="{{ 'Schema' | trans }}" value="{{ request.getParameter('schema') }}" />
 			    </div>
 			  </div>
 			  <hr />
 			  <div class="parent">
-			  	<button type="submit" class="pull-right btn btn-large btn-primary">Test Connection &amp; Go Next</button>
+			  	<button type="submit" class="pull-right btn btn-large btn-primary">Check Database Connection &amp; Step Forward</button>
 			  </div>
 			  <div class="clear"></div>
 			</form>

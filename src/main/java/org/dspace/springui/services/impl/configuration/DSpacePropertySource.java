@@ -1,7 +1,8 @@
 package org.dspace.springui.services.impl.configuration;
 
 import java.io.File;
-
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -13,6 +14,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.dspace.springui.services.api.configuration.ConfigurationPropertyChangeHandler;
 import org.dspace.springui.services.api.configuration.ConfigurationServiceException;
+import org.dspace.springui.util.Pair;
 import org.springframework.core.env.PropertySource;
 
 
@@ -20,9 +22,11 @@ public class DSpacePropertySource extends PropertySource<Object> {
 	public static final String DSPACE_SOURCE = "dspaceSource";
 	private static Logger log = LogManager.getLogger(DSpacePropertySource.class);
 	private PropertiesConfiguration properties;
+	private Map<Pair<String, ConfigurationPropertyChangeHandler>, DSpaceConfigurationListener> changeListeners = null;
 	
 	public DSpacePropertySource(File f, ReloadingStrategy reloader) throws ConfigurationServiceException {
 		super(f.getName());
+		changeListeners = new HashMap<Pair<String, ConfigurationPropertyChangeHandler>, DSpaceConfigurationListener>();
 		try {
 			properties = new PropertiesConfiguration(f);
 			properties.setAutoSave(true);
@@ -50,8 +54,21 @@ public class DSpacePropertySource extends PropertySource<Object> {
 		this.properties.setProperty(name, value);
 	}
 
-	public void setHandler(String name, ConfigurationPropertyChangeHandler handler) {
-		this.properties.addConfigurationListener(new DSpaceConfigurationListener(name, handler));
+	public void addHandler(String name, ConfigurationPropertyChangeHandler handler) {
+		DSpaceConfigurationListener listener = new DSpaceConfigurationListener(name, handler);
+		Pair<String, ConfigurationPropertyChangeHandler> pair = new Pair<String, ConfigurationPropertyChangeHandler>(name, handler);
+		this.changeListeners.put(pair, listener);
+		this.properties.addConfigurationListener(listener);
+	}
+
+
+	public void removeHandler(ConfigurationPropertyChangeHandler handler) {
+		for (Pair<String, ConfigurationPropertyChangeHandler> pair : this.changeListeners.keySet()) {
+			if (pair.getSecond() == handler) {
+				DSpaceConfigurationListener listener = this.changeListeners.get(pair);
+				this.properties.removeConfigurationListener(listener);
+			}
+		}
 	}
 
 	public void add(String key, Object value) {

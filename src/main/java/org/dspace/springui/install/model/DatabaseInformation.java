@@ -1,16 +1,16 @@
-package org.dspace.springui.orm;
+package org.dspace.springui.install.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class DatabaseConnection {
+public class DatabaseInformation {
 	private String host;
 	private String user;
 	private String pass;
 	private String schema;
 	private int port;
 	
-	public DatabaseConnection(String host, String user, String pass,
+	public DatabaseInformation(String host, String user, String pass,
 			String schema, int port) {
 		super();
 		this.host = host;
@@ -55,15 +55,10 @@ public class DatabaseConnection {
 		return port;
 	}
 	
-	public boolean isAvailable () {
-		try {
-			Class.forName(org.postgresql.Driver.class.getName());
-			Connection connection = null;
-			connection = DriverManager.getConnection("jdbc:postgresql://"+host+":"+port+"/"+schema, user, pass);
-			connection.close();
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+	public void test () throws Exception {
+		Class.forName(org.postgresql.Driver.class.getName());
+		Connection connection = null;
+		connection = DriverManager.getConnection("jdbc:postgresql://"+host+":"+port+"/"+schema, user, pass);
+		connection.close();
 	}
 }

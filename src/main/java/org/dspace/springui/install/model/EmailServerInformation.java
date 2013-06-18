@@ -1,7 +1,6 @@
-package org.dspace.springui.services.api.email;
+package org.dspace.springui.install.model;
 
 import java.util.Properties;
-
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -10,7 +9,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class SMTPSettings {
+public class EmailServerInformation {
+	
 	public enum ConnectionType {
 		NONE,
 		SSL,
@@ -26,14 +26,14 @@ public class SMTPSettings {
 	private String password;
 	
 
-	public SMTPSettings(String host, int port) {
+	public EmailServerInformation(String host, int port) {
 		this.host = host;
 		this.port = port;
 		this.hasAuthentication = false;
 		this.connection = ConnectionType.NONE;
 	}
 	
-	public SMTPSettings (String host, int port, String user, String pass) {
+	public EmailServerInformation (String host, int port, String user, String pass) {
 		this.host = host;
 		this.port = port;
 		
@@ -91,7 +91,7 @@ public class SMTPSettings {
 	}
 	
 	
-	public boolean isAvailable (String testEmail) {
+	public void test (String testEmail) throws Exception {
 		final String username = this.getUsername();
 		final String password = this.getPassword();
 		Properties props = new Properties();
@@ -119,17 +119,12 @@ public class SMTPSettings {
 		
         // or use getDefaultInstance instance if desired...
         Session session = Session.getInstance(props, auth);
-        
-		try {
-			Message message = new MimeMessage(session);
-			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(testEmail));
-			message.setSubject("DSpace : Testing SMTP Configuration");
-			message.setText("Success!");
-			Transport.send(message);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+
+		Message message = new MimeMessage(session);
+		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(testEmail));
+		message.setSubject("DSpace : Testing SMTP Configuration");
+		message.setText("Success!");
+		Transport.send(message);
 	}
 
 }
