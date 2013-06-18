@@ -17,19 +17,19 @@ public class ConfigurationWatcherService implements Service {
 	private Thread fileWatcher;
 	
 	@Override
-	public void refresh() throws ServiceException {
+	public synchronized void refresh() throws ServiceException {
 		this.stop();
 		this.start();
 	}
 
 	@Override
-	public void start() throws ServiceException {
+	public synchronized void start() throws ServiceException {
 		if (fileWatcher == null) throw new ServiceException("Service not correctly initialized");
 		fileWatcher.start();
 	}
 
 	@Override
-	public void stop() throws ServiceException {
+	public synchronized void stop() throws ServiceException {
 		if (fileWatcher == null) throw new ServiceException("Service not correctly initialized");
 		fileWatcher.interrupt();
 	}
