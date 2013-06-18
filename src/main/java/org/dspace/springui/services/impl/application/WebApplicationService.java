@@ -1,7 +1,7 @@
 package org.dspace.springui.services.impl.application;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileFilter;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -9,22 +9,24 @@ import org.dspace.springui.configuration.RefreshServiceOnChangeHandler;
 import org.dspace.springui.services.api.application.Service;
 import org.dspace.springui.services.api.application.ServiceException;
 import org.dspace.springui.services.api.configuration.ConfigurationService;
+import org.dspace.springui.web.server.SharedApplicationContextServer;
 import org.eclipse.jetty.ajp.Ajp13SocketConnector;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.bio.SocketConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 public class WebApplicationService implements Service {
-	private static final String ROOT_HANDLER_NAME = "ROOT";
+	private static final String ROOT_HANDLER_NAME = "root";
 	private static final String WAR_EXTENSION = ".war";
 	private static final int DEFAULT_HTTP_PORT = 9999;
 	private static final int DEFAULT_AJP_PORT = 8013;
 	private static final String DEFAULT_WEBAPPS_DIR = "webapps";
 	private static Logger log = Logger.getLogger(WebApplicationService.class);
+	@Autowired ApplicationContext applicationContext;
 	@Autowired ConfigurationService config;
 	
 	private Server server;
@@ -123,19 +125,20 @@ public class WebApplicationService implements Service {
 	private void setupAvailableWebapps () {
 		File webappDir = new File(config.getProperty("server.webapps", String.class, DEFAULT_WEBAPPS_DIR));
 		
-		File[] files = webappDir.listFiles(new FilenameFilter() {
+		File[] files = webappDir.listFiles(new FileFilter() {
 			@Override
-			public boolean accept(File dir, String name) {
+			public boolean accept(File dir) {
 				return dir.isFile() && dir.getName().toLowerCase().endsWith(WAR_EXTENSION);
 			}
 		});
+		
 		if (files == null) files = new File[0];
 		
 		
 		for (File war : files) {
 			String name = this.getWebappName(war);
 			if (!handlers.containsKey(name)) {
-				WebAppContext webapp = new WebAppContext();
+				SharedApplicationContextServer webapp = new SharedApplicationContextServer();
 				if (name.equals(ROOT_HANDLER_NAME))
 					webapp.setContextPath("/");
 				else
@@ -143,6 +146,7 @@ public class WebApplicationService implements Service {
 				
 				webapp.setWar(war.getPath());
 				webapp.setParentLoaderPriority(true);
+				webapp.setApplicationContext(applicationContext);
 				
 				handlers.put(name, webapp);
 				

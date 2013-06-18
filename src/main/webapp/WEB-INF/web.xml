@@ -7,7 +7,7 @@
 	<display-name>SpringUI</display-name>
 
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+		<listener-class>org.dspace.springui.web.server.ContextApplicationLoader</listener-class>
 	</listener>
 	<listener>
   		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
