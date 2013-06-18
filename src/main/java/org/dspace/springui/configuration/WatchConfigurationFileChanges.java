@@ -1,4 +1,4 @@
-package org.dspace.springui.web.core.configuration;
+package org.dspace.springui.configuration;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

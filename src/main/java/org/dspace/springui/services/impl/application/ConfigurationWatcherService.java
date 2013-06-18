@@ -2,13 +2,13 @@ package org.dspace.springui.services.impl.application;
 
 import java.io.File;
 import org.apache.commons.configuration.reloading.ReloadingStrategy;
+import org.dspace.springui.configuration.ReloadStrategy;
+import org.dspace.springui.configuration.WatchConfigurationFileChanges;
 import org.dspace.springui.services.api.application.Service;
 import org.dspace.springui.services.api.application.ServiceException;
 import org.dspace.springui.services.api.configuration.ConfigurationServiceException;
 import org.dspace.springui.services.impl.configuration.DSpaceConfigurationLocator;
 import org.dspace.springui.services.impl.configuration.DSpacePropertySource;
-import org.dspace.springui.web.core.configuration.ReloadStrategy;
-import org.dspace.springui.web.core.configuration.WatchConfigurationFileChanges;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 

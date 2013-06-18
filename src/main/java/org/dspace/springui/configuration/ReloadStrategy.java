@@ -1,4 +1,4 @@
-package org.dspace.springui.web.core.configuration;
+package org.dspace.springui.configuration;
 
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.reloading.ReloadingStrategy;
