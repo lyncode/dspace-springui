@@ -2,14 +2,12 @@ package org.dspace.springui.services.impl.application;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.dspace.springui.configuration.RefreshServiceOnChangeHandler;
 import org.dspace.springui.services.api.application.Service;
 import org.dspace.springui.services.api.application.ServiceException;
-import org.dspace.springui.services.api.configuration.ConfigurationPropertyChangeHandler;
 import org.dspace.springui.services.api.configuration.ConfigurationService;
 import org.eclipse.jetty.ajp.Ajp13SocketConnector;
 import org.eclipse.jetty.server.Connector;
@@ -24,13 +22,15 @@ public class WebApplicationService implements Service {
 	private static final String ROOT_HANDLER_NAME = "ROOT";
 	private static final String WAR_EXTENSION = ".war";
 	private static final int DEFAULT_HTTP_PORT = 9999;
+	private static final int DEFAULT_AJP_PORT = 8013;
 	private static final String DEFAULT_WEBAPPS_DIR = "webapps";
 	private static Logger log = Logger.getLogger(WebApplicationService.class);
 	@Autowired ConfigurationService config;
 	
 	private Server server;
 	private Map<String, Handler> handlers;
-	private Map<String, StateRestartServiceHandler> watchHandlers;
+	private Map<String, RefreshServiceOnChangeHandler> watchHandlers;
+	private Map<String, Connector> connectors;
 
 	@Override
 	public synchronized void refresh() throws ServiceException {
@@ -66,6 +66,9 @@ public class WebApplicationService implements Service {
 		} catch (Exception e) {
 			throw new ServiceException(e);
 		}
+		
+		this.setupAvailableWebapps();
+		this.setupConnectors();
 		
 		HandlerList list = new HandlerList();
 		for (String name : handlers.keySet())
@@ -113,26 +116,13 @@ public class WebApplicationService implements Service {
 		return propName;
 	}
 	
-	public void init () {
-		this.server = new Server();
-		List<Connector> connectors = new ArrayList<Connector>();
+	private String getWebappName (File war) {
+		return war.getName().toLowerCase().replace(WAR_EXTENSION, "");
+	}
 	
-		if (config.getProperty("server.http", Boolean.class, true)) {
-			SocketConnector connectorHTTP = new SocketConnector();
-			connectorHTTP.setPort(config.getProperty("server.http.port", Integer.class, DEFAULT_HTTP_PORT));
-			connectors.add(connectorHTTP);
-		}
-		
-		if (config.getProperty("server.ajp", Boolean.class, false)) {
-			Ajp13SocketConnector ajp = new Ajp13SocketConnector();
-			ajp.setPort(config.getProperty("server.ajp.port", Integer.class));
-		}
- 
-		// register the connector
-		server.setConnectors(connectors.toArray(new Connector[0]));
+	private void setupAvailableWebapps () {
 		File webappDir = new File(config.getProperty("server.webapps", String.class, DEFAULT_WEBAPPS_DIR));
 		
-		handlers = new HashMap<String, Handler>();
 		File[] files = webappDir.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
@@ -141,76 +131,71 @@ public class WebApplicationService implements Service {
 		});
 		if (files == null) files = new File[0];
 		
-		watchHandlers = new HashMap<String, StateRestartServiceHandler>();
 		
 		for (File war : files) {
-			String name = war.getName().toLowerCase().replace(WAR_EXTENSION, "");
-			WebAppContext webapp = new WebAppContext();
-			if (name.equals(ROOT_HANDLER_NAME))
-				webapp.setContextPath("/");
-			else
-				webapp.setContextPath(name);
-			
-			webapp.setWar(war.getPath());
-			webapp.setParentLoaderPriority(true);
-			
-			handlers.put(name, webapp);
-			
-			StateRestartServiceHandler watcher = new StateRestartServiceHandler(this, this.isWebappActive(name));
-			config.addWatchHandler(watcher, this.getWebappActiveProperty(name));
-			watchHandlers.put(name, watcher);
+			String name = this.getWebappName(war);
+			if (!handlers.containsKey(name)) {
+				WebAppContext webapp = new WebAppContext();
+				if (name.equals(ROOT_HANDLER_NAME))
+					webapp.setContextPath("/");
+				else
+					webapp.setContextPath(name);
+				
+				webapp.setWar(war.getPath());
+				webapp.setParentLoaderPriority(true);
+				
+				handlers.put(name, webapp);
+				
+				RefreshServiceOnChangeHandler watcher = new RefreshServiceOnChangeHandler(this, this.isWebappActive(name));
+				config.addWatchHandler(watcher, this.getWebappActiveProperty(name));
+				watchHandlers.put(name, watcher);
+			}
 		}
+	}
+	
+	private void setupConnectors () {
+		int httpPort = config.getProperty("server.http.port", Integer.class, DEFAULT_HTTP_PORT);
+		if (config.getProperty("server.http", Boolean.class, true)) {
+			SocketConnector connectorHTTP = new SocketConnector();
+			connectorHTTP.setPort(httpPort);
+			connectors.put("HTTP", connectorHTTP);
+		} else connectors.remove("HTTP");
+		
+		if (!watchHandlers.containsKey("server.http"))
+			watchHandlers.put("server.http", new RefreshServiceOnChangeHandler(this, connectors.containsKey("HTTP")));
+		if (!watchHandlers.containsKey("server.http.port"))
+			watchHandlers.put("server.http.port", new RefreshServiceOnChangeHandler(this, httpPort));
+		
+		
+		int ajpPort = config.getProperty("server.ajp.port", Integer.class, DEFAULT_AJP_PORT);
+		if (config.getProperty("server.ajp", Boolean.class, false)) {
+			Ajp13SocketConnector ajp = new Ajp13SocketConnector();
+			ajp.setPort(ajpPort);
+			connectors.put("AJP", ajp);
+		} else connectors.remove("AJP");
+		
+		if (!watchHandlers.containsKey("server.ajp"))
+			watchHandlers.put("server.ajp", new RefreshServiceOnChangeHandler(this, connectors.containsKey("AJP")));
+		if (!watchHandlers.containsKey("server.ajp.port"))
+			watchHandlers.put("server.ajp.port", new RefreshServiceOnChangeHandler(this, ajpPort));
+ 
+		// register the connector
+		server.setConnectors(connectors.values().toArray(new Connector[0]));
+	}
+	
+	public void init () {
+		this.server = new Server();
+		this.handlers = new HashMap<String, Handler>();
+		this.watchHandlers = new HashMap<String, RefreshServiceOnChangeHandler>();
+		this.connectors = new HashMap<String, Connector>();
 	}
 
 
 	@Override
 	public void destroy() throws ServiceException {
 		this.stop();
-		for (StateRestartServiceHandler watcher : this.watchHandlers.values()) 
+		for (RefreshServiceOnChangeHandler watcher : this.watchHandlers.values()) 
 			this.config.removeWatchHandler(watcher);
-	}
-	
-	public class StateRestartServiceHandler extends ConfigurationPropertyChangeHandler {
-		private boolean active;
-		private WebApplicationService service;
-		
-		public StateRestartServiceHandler (WebApplicationService service, boolean active) {
-			this.active = active;
-			this.service = service;
-		}
-		
-		@Override
-		public void handleModification(Object object) {
-			if (this.active != (Boolean) object) {
-				this.active = (Boolean) object;
-				try {
-					if (service.isRunning())
-						this.service.refresh();
-				} catch (ServiceException e) {
-					log.error(e.getMessage(), e);
-				}
-			}
-		}
-
-		@Override
-		public void handleCreation(Object object) {
-			try {
-				if (service.isRunning())
-					this.service.refresh();
-			} catch (ServiceException e) {
-				log.error(e.getMessage(), e);
-			}
-		}
-
-		@Override
-		public void handleDelete() {
-			try {
-				if (service.isRunning())
-					this.service.refresh();
-			} catch (ServiceException e) {
-				log.error(e.getMessage(), e);
-			}
-		}
 	}
 
 }

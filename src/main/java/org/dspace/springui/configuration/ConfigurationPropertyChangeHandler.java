@@ -1,4 +1,4 @@
-package org.dspace.springui.services.api.configuration;
+package org.dspace.springui.configuration;
 
 public abstract class  ConfigurationPropertyChangeHandler {
 	public abstract void  handleModification (Object object);

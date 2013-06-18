@@ -12,7 +12,7 @@ import org.apache.commons.configuration.reloading.ReloadingStrategy;
 import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.dspace.springui.services.api.configuration.ConfigurationPropertyChangeHandler;
+import org.dspace.springui.configuration.ConfigurationPropertyChangeHandler;
 import org.dspace.springui.services.api.configuration.ConfigurationServiceException;
 import org.dspace.springui.util.Pair;
 import org.springframework.core.env.PropertySource;

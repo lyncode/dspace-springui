@@ -7,6 +7,8 @@
  */
 package org.dspace.springui.services.api.configuration;
 
+import org.dspace.springui.configuration.ConfigurationPropertyChangeHandler;
+
 
 /**
  * 

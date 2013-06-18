@@ -2,7 +2,7 @@ package org.dspace.springui.services.impl.configuration;
 
 import java.util.Iterator;
 
-import org.dspace.springui.services.api.configuration.ConfigurationPropertyChangeHandler;
+import org.dspace.springui.configuration.ConfigurationPropertyChangeHandler;
 import org.dspace.springui.services.api.configuration.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

@@ -26,6 +26,7 @@ public class Starter {
 	            @Override
 	            public void run()
 	            {
+	            	System.out.println("Terminating services");
 	            	for (Service service : services.values()) {
 						try {
 							service.destroy();
