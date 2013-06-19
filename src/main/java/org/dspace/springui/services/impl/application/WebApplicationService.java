@@ -25,7 +25,9 @@ public class WebApplicationService implements Service {
 	private static final int DEFAULT_HTTP_PORT = 9999;
 	private static final int DEFAULT_AJP_PORT = 8013;
 	private static final String DEFAULT_WEBAPPS_DIR = "webapps";
+	
 	private static Logger log = Logger.getLogger(WebApplicationService.class);
+	
 	@Autowired ApplicationContext applicationContext;
 	@Autowired ConfigurationService config;
 	
@@ -36,7 +38,11 @@ public class WebApplicationService implements Service {
 
 	@Override
 	public synchronized void refresh() throws ServiceException {
-		this.stop();
+		try {
+			this.stop();
+		} catch (Exception e) {
+			log.debug("Expected expection");
+		}
 		this.start();
 	}
 	
@@ -82,7 +88,6 @@ public class WebApplicationService implements Service {
         try {
 			server.start();
 			log.info("Web server started");
-	        server.join();
 		} catch (Exception e) {
 			throw new ServiceException("Unable to start web server", e);
 		}
