@@ -3,7 +3,7 @@ package org.dspace.springui.install.model;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class DatabaseInformation {
+public class DatabaseInformation implements InstallObject {
 	private String host;
 	private String user;
 	private String pass;
@@ -60,5 +60,13 @@ public class DatabaseInformation {
 		Connection connection = null;
 		connection = DriverManager.getConnection("jdbc:postgresql://"+host+":"+port+"/"+schema, user, pass);
 		connection.close();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public Object deepClone() {
+		return new DatabaseInformation(this.getHost(), this.getUser(), this.getPass(), this.getSchema(), this.getPort());
 	}
 }

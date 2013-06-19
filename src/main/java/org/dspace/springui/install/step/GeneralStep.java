@@ -8,7 +8,7 @@ import org.dspace.springui.install.model.GeneralInformation;
 import org.dspace.springui.install.model.Language;
 import org.springframework.ui.ModelMap;
 
-public class GeneralStep extends AbstractStep<GeneralInformation> {
+public class GeneralStep extends AbstractStep {
 
 	@Override
 	public GeneralInformation validate(HttpServletRequest request) throws InstallException {

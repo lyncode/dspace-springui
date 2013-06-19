@@ -1,10 +1,11 @@
 package org.dspace.springui.install.model;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeneralInformation {
+public class GeneralInformation implements InstallObject {
 	private String name;
 	private URL url;
 	private Language defaultLanguage;
@@ -54,6 +55,22 @@ public class GeneralInformation {
 	 */
 	public List<Language> getAvailableLanguages() {
 		return availableLanguages;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public Object deepClone() {
+		GeneralInformation instance = new GeneralInformation();
+		instance.setDefaultLanguage(this.getDefaultLanguage());
+		instance.setName(this.getName());
+		try {
+			instance.setUrl(new URL(this.getUrl().toString()));
+		} catch (MalformedURLException e) {
+			// Cannot copy URL
+		}
+		instance.getAvailableLanguages().addAll(this.getAvailableLanguages());
+		return instance;
 	}
 
 }

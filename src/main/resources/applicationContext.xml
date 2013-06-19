@@ -18,6 +18,7 @@
 	<bean class="org.dspace.springui.services.impl.application.ConfigureLoggerService" />
 	<bean class="org.dspace.springui.services.impl.application.WebApplicationService" />
 	<bean class="org.dspace.springui.services.impl.application.ConfigurationWatcherService" />
+	<bean class="org.dspace.springui.services.impl.application.DSpaceInstallService" />
 	
 
 	<!-- Application Services -->	

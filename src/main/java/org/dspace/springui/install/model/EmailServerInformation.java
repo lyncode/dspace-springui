@@ -9,7 +9,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class EmailServerInformation {
+public class EmailServerInformation implements InstallObject {
 	
 	public enum ConnectionType {
 		NONE,
@@ -127,4 +127,15 @@ public class EmailServerInformation {
 		Transport.send(message);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public Object deepClone() {
+		EmailServerInformation instance = new EmailServerInformation(this.getHost(), this.getPort(), this.getUsername(), this.getPassword());
+		instance.setConnection(this.getConnection());
+		return instance;
+	}
+
+	
 }

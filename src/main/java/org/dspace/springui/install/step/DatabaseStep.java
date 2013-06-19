@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.dspace.springui.install.model.DatabaseInformation;
 import org.springframework.ui.ModelMap;
 
-public class DatabaseStep extends AbstractStep<DatabaseInformation> {
+public class DatabaseStep extends AbstractStep {
 
 	@Override
 	public void prepare(ModelMap model) {

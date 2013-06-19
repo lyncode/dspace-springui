@@ -10,6 +10,8 @@ import org.dspace.springui.install.step.DatabaseStep;
 import org.dspace.springui.install.step.EmailServerStep;
 import org.dspace.springui.install.step.GeneralStep;
 import org.dspace.springui.install.step.InstallException;
+import org.dspace.springui.services.impl.application.DSpaceInstallService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +21,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/install")
 public class InstallController {
-	private List<AbstractStep<?>> steps;
 	private static Logger log = Logger.getLogger(InstallController.class);
 	
+	@Autowired DSpaceInstallService installService;
+	private List<AbstractStep> steps;
+	
 	public InstallController () {
-		steps = new ArrayList<AbstractStep<?>>();
+		steps = new ArrayList<AbstractStep>();
 		steps.add(new GeneralStep());
 		steps.add(new DatabaseStep());
 		steps.add(new EmailServerStep());
@@ -31,7 +35,7 @@ public class InstallController {
 	
 	@RequestMapping("")
 	public String indexAction (ModelMap model) {
-		AbstractStep<?> step = steps.get(0);
+		AbstractStep step = steps.get(0);
 		model.addAttribute("currentStep", 1);
 		model.addAttribute("nextStep", 2);
 		step.prepare(model);
@@ -45,8 +49,8 @@ public class InstallController {
 			@PathVariable("id") int stepId) {
 		boolean isFinal = false;
 		model.addAttribute("request", request);
-		AbstractStep<?> previousStep = steps.get(stepId-2);
-		AbstractStep<?> nextStep = null;
+		AbstractStep previousStep = steps.get(stepId-2);
+		AbstractStep nextStep = null;
 		if (stepId <= steps.size()) 
 			nextStep = steps.get(stepId-1);
 		else
@@ -72,13 +76,10 @@ public class InstallController {
 
 	@RequestMapping(value="/final")
 	public String finalAction (ModelMap model, HttpSession session, HttpServletRequest request) {
-		for (AbstractStep<?> step : this.steps) {
-			try {
-				step.install(session.getAttribute(step.getView()));
-			} catch (InstallException e) {
-				log.error(e.getMessage(), e);
-				model.addAttribute("error", e.getMessage());
-			}
+		try {
+			installService.install(steps, session);
+		} catch (InstallException e) {
+			model.addAttribute("error", e.getMessage());
 		}
 		model.addAttribute("currentStep", this.steps.size());
 		return "install/step/final";

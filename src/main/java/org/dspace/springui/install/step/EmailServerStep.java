@@ -5,7 +5,7 @@ import org.dspace.springui.install.model.EmailServerInformation;
 import org.dspace.springui.install.model.EmailServerInformation.ConnectionType;
 import org.springframework.ui.ModelMap;
 
-public class EmailServerStep extends AbstractStep<EmailServerInformation> {
+public class EmailServerStep extends AbstractStep {
 
 	@Override
 	public void prepare(ModelMap model) {
