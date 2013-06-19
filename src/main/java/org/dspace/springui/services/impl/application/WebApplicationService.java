@@ -22,8 +22,8 @@ import org.springframework.context.ApplicationContext;
 public class WebApplicationService implements Service {
 	private static final String ROOT_HANDLER_NAME = "root";
 	private static final String WAR_EXTENSION = ".war";
-	private static final int DEFAULT_HTTP_PORT = 9999;
-	private static final int DEFAULT_AJP_PORT = 8013;
+	public static final int DEFAULT_HTTP_PORT = 9999;
+	public static final int DEFAULT_AJP_PORT = 8013;
 	private static final String DEFAULT_WEBAPPS_DIR = "webapps";
 	
 	private static Logger log = Logger.getLogger(WebApplicationService.class);

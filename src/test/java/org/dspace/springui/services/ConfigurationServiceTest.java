@@ -28,7 +28,7 @@ public class ConfigurationServiceTest {
 	}
 	
 	@Test
-	public void testAddProperty () { // Without configuration file setup
+	public void testAddProperty () { // Without configuration file setup it must not be able to add the property
 		 assertFalse(config.addProperty("test", "test"));
 	}
 
