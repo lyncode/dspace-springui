@@ -37,6 +37,7 @@ public class DSpaceInstallService implements Service {
 		if (this.installerThread != null) {
 			if (this.installerThread.isAlive()) {
 				try {
+					this.installerThread.gracefullStop();
 					this.installerThread.join();
 				} catch (InterruptedException e) {
 					throw new ServiceException(e);
@@ -180,6 +181,13 @@ public class DSpaceInstallService implements Service {
 				size = this.steps.size();
 			}
 			return size;
+		}
+		
+		public void gracefullStop () {
+			synchronized (steps) {
+				steps.clear();
+			}
+			this.locker.notifyAll();
 		}
 	}
 	
