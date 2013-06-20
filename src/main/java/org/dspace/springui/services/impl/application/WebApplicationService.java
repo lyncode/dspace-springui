@@ -38,11 +38,8 @@ public class WebApplicationService implements Service {
 
 	@Override
 	public synchronized void refresh() throws ServiceException {
-		try {
-			this.stop();
-		} catch (Exception e) {
-			log.debug("Expected expection");
-		}
+		this.destroy();
+		this.init();
 		this.start();
 	}
 	
@@ -83,6 +80,7 @@ public class WebApplicationService implements Service {
 			if (this.isWebappActive(name)) 
 				list.addHandler(handlers.get(name));
 		
+		
 		server.setHandler(list);
         
         try {
@@ -96,7 +94,8 @@ public class WebApplicationService implements Service {
 	@Override
 	public synchronized void stop() throws ServiceException {
 		try {
-			this.server.stop();
+			if (this.server != null)
+				this.server.stop();
 		} catch (Exception e) {
 			throw new ServiceException("Unable to stop web server", e);
 		}
@@ -194,17 +193,38 @@ public class WebApplicationService implements Service {
 	
 	public void init () {
 		this.server = new Server();
+		this.server.setGracefulShutdown(1000);
+	    this.server.setStopAtShutdown(true);
 		this.handlers = new HashMap<String, Handler>();
 		this.watchHandlers = new HashMap<String, RefreshServiceOnChangeHandler>();
 		this.connectors = new HashMap<String, Connector>();
 	}
-
+	
+	public boolean isStarting () {
+		if (this.server == null) return false;
+		else {
+			return this.server.isStarting();
+		}
+	}
+	
+	public boolean isStopping () {
+		if (this.server == null) return false;
+		else {
+			return this.server.isStopping();
+		}
+	}
+ 
 
 	@Override
 	public void destroy() throws ServiceException {
 		this.stop();
+		this.server.destroy();
 		for (RefreshServiceOnChangeHandler watcher : this.watchHandlers.values()) 
 			this.config.removeWatchHandler(watcher);
+		this.server = null;
+		this.handlers = null;
+		this.watchHandlers = null;
+		this.connectors = null;
 	}
 
 }
